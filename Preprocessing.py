@@ -27,6 +27,14 @@ def replacing_missing(df):
     mean_normalised_losses = df["normalized-losses"].mean(skipna = True)
     df["normalized-losses"] = df["normalized-losses"].replace(np.nan, mean_normalised_losses)
 
+    df = df.replace({"peak-rpm": '?'}, np.nan)
+    df["peak-rpm"] = df["peak-rpm"].astype(float, errors = 'raise')
+
+    df = df.replace({"horsepower": '?'}, np.nan)
+    df["horsepower"] = df["horsepower"].astype(float, errors = 'raise')
+    mean_horsepower = df["horsepower"].mean(skipna = True)
+    df["horsepower"] = df["horsepower"].replace(np.nan, mean_horsepower)
+
     return df
 
 def data_formatting(df):
@@ -65,13 +73,6 @@ def binning(df):
     return df
 
 def categorical_to_quantitative(df):
-    df = pd.concat([df, pd.get_dummies(df["fuel-type"])], ignore_index=True)
-    #print(df["gas"].head(5))
-    #print(df["diesel"].head(5))
+    print(pd.get_dummies(df["fuel-type"]))
 
     print(df.columns)
-    print(df["diesel"])
-    print(df["gas"])
-    print(df["fuel-type"])
-
-    return df

@@ -1,5 +1,6 @@
 from Importing_exporting_data import *
 from Preprocessing import *
+from Exploratory_data_analysis import *
 
 def main():
     print("Hello!")
@@ -7,7 +8,6 @@ def main():
     df = read_from_path(path)
     save_path = "Data/imports-85.csv"
     save_df_csv(df, save_path)
-    #column_values(df)
     describe_df(df)
     df = dropping_missing(df)
     df = replacing_missing(df)
@@ -16,7 +16,13 @@ def main():
     #df = data_normalization(df, "min-max")
     df = data_normalization(df, "z-score")
     df = binning(df)
-    df = categorical_to_quantitative(df)
+    # categorical_to_quantitative(df)
+    # descriptive_statistics(df)
+    # descriptive_plots(df)
+    # group_by_usage(df)
+    # correlation(df)
+    # correlation_statistics(df)
+    relation_between_categorical_chi_square(df)
 
 
 main()
