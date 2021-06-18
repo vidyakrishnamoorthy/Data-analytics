@@ -6,6 +6,7 @@ from sklearn.pipeline import make_pipeline
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import mean_squared_error
 
 def single_linear_regression(df):
     lm = LinearRegression()
@@ -15,16 +16,24 @@ def single_linear_regression(df):
     lm.fit(X, Y)
     Yhat = lm.predict(X)
     #print(numpy.concatenate(Yhat, axis = 0))
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", lm.score(X,Y))
+    print("Prediction:", lm.predict(np.array(30.0).reshape(-1, 1))) # Predicted price: 13555.50706069
     print(lm.intercept_, lm.coef_) # [37758.48383499] [[-806.76589248]]
 
     Z = df[["horsepower", "curb-weight", "engine-size", "highway-mpg"]]
-    lm.fit(Z,Y)
+    lm.fit(Z, Y)
     Yhat = lm.predict(Z)
     #print(Yhat)
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", lm.score(Z,Y))
     print(lm.intercept_, lm.coef_) # [-1932.73053419] [[ -15.78505192    2.97034008  120.15672652 -205.25362564]]
 
     A = df[["horsepower", "engine-size"]]
-    lm.fit(A,Y)
+    lm.fit(A, Y)
+    Yhat = lm.predict(A)
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", lm.score(A,Y))
     print(lm.intercept_, lm.coef_)
 
 # using regplot and residual plot to verify the linearity of the model
@@ -41,6 +50,9 @@ def model_using_visualization(df):
     Y = df[["price"]]
     lm.fit(X, Y)
     Yhat = lm.predict(X)
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", lm.score(X,Y))
+
     axl = sns.kdeplot(df["price"], color = 'r', label = "Actual value")
     sns.kdeplot(np.concatenate(Yhat, axis = 0), color = 'b', label = "Fitted value", ax = axl)
     plt.show()
@@ -48,6 +60,9 @@ def model_using_visualization(df):
     Z = df[["horsepower", "curb-weight", "engine-size", "highway-mpg"]]
     lm.fit(Z, Y)
     Yhat = lm.predict(Z)
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", lm.score(Z,Y))
+
     axl = sns.kdeplot(df["price"], color = 'r', label = "Actual value")
     sns.kdeplot(np.concatenate(Yhat, axis = 0), color = 'b', label = "Fitted value", ax= axl)
     plt.show()
@@ -74,9 +89,30 @@ def pipelines(df):
     input = [('scale', StandardScaler()), ('polynomial', PolynomialFeatures(degree = 2)),
              ('mode', LinearRegression())] # tuple: ('name_of_estimator', model_constructor)
     pipe = Pipeline(input)
-    pipe.fit(df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']], df["price"])
+    X = df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']]
+    Y = df["price"]
+
+    pipe.fit(X, Y)
     Yhat = pipe.predict(df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']])
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", pipe.score(X, Y))
+
     axl = sns.kdeplot(df["price"], color='r', label="Actual value")
     sns.kdeplot(Yhat, color='b', label="Fitted value", ax=axl)
     plt.show()
 
+
+def predictions(df):
+    lm = LinearRegression()
+    X = df[["highway-mpg"]]
+    Y = df[["price"]]
+
+    lm.fit(X, Y)
+    Yhat = lm.predict(X)
+    print("MSE:", mean_squared_error(Y, Yhat))
+    print("Rsquared", lm.score(X,Y))
+    print(lm.intercept_, lm.coef_) # [37758.48383499] [[-806.76589248]]
+
+    print("Prediction:", lm.predict(np.array(30.0).reshape(-1, 1))) # Predicted price: 13555.50706069
+    new_input = np.arange(1, 101, 1).reshape(-1,1)
+    print("Prediction:", lm.predict(new_input)) # Predicted price: 13555.50706069
